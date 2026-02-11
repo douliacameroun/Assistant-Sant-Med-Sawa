@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleGenerativeAI } from "@google/genai"; // Retour à l'import standard propre
+import * as GoogleGenAI from "@google/genai"; // On importe TOUT le module pour éviter l'erreur d'export
 
-// Remplacez par votre vraie clé Gemini
-const API_KEY = "AIzaSyAsrP_cMNKJqDvBv9_4LFReEP8fEPi6ew0"; 
+// Remplace par ta vraie clé Gemini
+const API_KEY = "VOTRE_CLE_AIZA_ICI"; 
 
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
-  // Initialisation sécurisée de l'IA
-  const genAI = new GoogleGenerativeAI(API_KEY);
+  // Utilisation sécurisée du constructeur via l'objet global du module
+  const genAI = new GoogleGenAI.GoogleGenerativeAI(API_KEY);
 
   useEffect(() => {
     const hasVisited = localStorage.getItem('med_sawa_visited');
