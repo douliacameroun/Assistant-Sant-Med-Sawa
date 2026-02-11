@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import * as GoogleGenAI from "@google/genai"; // Correction de l'importation
 
 // Remplace TON_API_KEY_ICI par ta vraie clé Gemini (AIza...)
-const API_KEY = "TON_API_KEY_ICI"; 
+const API_KEY = "AIzaSyAsrP_cMNKJqDvBv9_4LFReEP8fEPi6ew0"; 
 const genAI = new GoogleGenAI.GoogleGenerativeAI(API_KEY);
 
 const App = () => {
