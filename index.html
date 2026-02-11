@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MED SAWA - IA Hospitalière Élite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+          --med-navy: #1B3B66;
+          --sawa-tan: #C07D38;
+          --med-green: #7CB342;
+          --ai-bg: #F8FAFF;
+        }
+        body { 
+          font-family: 'Plus Jakarta Sans', sans-serif; 
+          background-color: var(--ai-bg);
+          overflow: hidden;
+          color: #1E293B;
+        }
+        .bg-ai-gradient {
+          background: linear-gradient(135deg, #FFFFFF 0%, #EBF4FF 50%, #F0F9FF 100%);
+          min-height: 100vh;
+        }
+        .glass-card {
+          background: rgba(255, 255, 255, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.8);
+          box-shadow: 0 10px 25px -5px rgba(27, 59, 102, 0.05);
+        }
+        .text-gradient-sawa {
+          background: linear-gradient(to right, #C07D38, #E4A853);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .text-gradient-med {
+          background: linear-gradient(to right, #1B3B66, #4A90E2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(27, 59, 102, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(192, 125, 56, 0.2);
+        }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "framer-motion": "https://esm.sh/framer-motion@^11.11.11",
+        "@google/genai": "https://esm.sh/@google/genai@^1.37.0"
+      }
+    }
+    </script>
+</head>
+<body class="bg-ai-gradient antialiased">
+    <div id="root"></div>
+</body>
+</html>
