@@ -42,6 +42,7 @@ export async function decodeAudioData(
   return buffer;
 }
 
+// Using process.env.API_KEY as required by the environment
 export const createChatSession = () => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   return ai.chats.create({ 
@@ -53,6 +54,7 @@ export const createChatSession = () => {
   });
 };
 
+// Using process.env.API_KEY as required by the environment
 export const generateTTS = async (text: string) => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
@@ -70,6 +72,7 @@ export const generateTTS = async (text: string) => {
   return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
 };
 
+// Using process.env.API_KEY as required by the environment
 export const connectLiveVoice = (callbacks: {
   onOpen: () => void;
   onMessage: (message: LiveServerMessage) => void;

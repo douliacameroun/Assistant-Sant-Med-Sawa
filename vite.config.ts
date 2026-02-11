@@ -12,9 +12,5 @@ export default defineConfig({
   },
   server: {
     port: 3000
-  },
-  // On mappe process.env pour que le SDK Gemini puisse y accéder directement
-  define: {
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   }
 });

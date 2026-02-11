@@ -50,14 +50,14 @@ const Logo: React.FC<{ isTyping?: boolean; isListening?: boolean; isSpeaking?: b
         )}
       </AnimatePresence>
       <div className="w-12 h-12 md:w-16 md:h-16 relative z-10 bg-white rounded-xl p-1.5 md:p-2 shadow-2xl border border-slate-100 flex items-center justify-center">
-        <img src={LOGO_URL} alt="MED SAWA" className="w-full h-full object-contain" />
+        <img src={LOGO_URL} alt="DOULIA" className="w-full h-full object-contain" />
       </div>
     </div>
     <div className="flex flex-col">
       <div className="flex items-baseline gap-1">
-        <span className="text-xl md:text-2xl font-black text-[#1B3B66] tracking-tighter uppercase leading-none">MED SAWA</span>
+        <span className="text-xl md:text-2xl font-black text-[#1B3B66] tracking-tighter uppercase leading-none">DOULIA</span>
       </div>
-      <span className="text-[8px] md:text-[9px] font-bold text-[#C07D38] uppercase tracking-[0.3em] opacity-80">IA Hospitalière Élite</span>
+      <span className="text-[8px] md:text-[9px] font-bold text-[#C07D38] uppercase tracking-[0.3em] opacity-80">IA Consulting Élite</span>
     </div>
   </div>
 );
@@ -189,7 +189,7 @@ const App: React.FC = () => {
     const trimmedText = textToSend.trim();
     if (!trimmedText && !attachedFile || isTyping) return;
 
-    const userMsg = trimmedText || `[Fichier médical joint: ${attachedFile?.name}]`;
+    const userMsg = trimmedText || `[Fichier joint: ${attachedFile?.name}]`;
     setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', text: userMsg, timestamp: Date.now() }]);
     setInputText('');
     
@@ -200,6 +200,7 @@ const App: React.FC = () => {
 
     try {
       let response;
+      // Use process.env.API_KEY directly as required
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       if (file) {
@@ -208,7 +209,7 @@ const App: React.FC = () => {
           contents: {
             parts: [
               { inlineData: { data: file.data, mimeType: file.type } },
-              { text: trimmedText || "Analyse ce document hospitalier dans le contexte d'un audit de performance MED SAWA." }
+              { text: trimmedText || "Analyse ce document dans le contexte d'un audit stratégique DOULIA." }
             ]
           }
         });
@@ -217,7 +218,7 @@ const App: React.FC = () => {
         response = await chatSessionRef.current.sendMessage({ message: trimmedText });
       }
 
-      const aiText = response.text || "Expertise clinique temporairement indisponible.";
+      const aiText = response.text || "Expertise temporairement indisponible.";
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'ai', text: aiText, timestamp: Date.now() }]);
       setIsTyping(false);
       
@@ -226,13 +227,13 @@ const App: React.FC = () => {
       if (aiText.toUpperCase().includes("AUDIT") || aiText.toUpperCase().includes("TRANSFORMATION")) {
         setAuditData({
           maturityScore: Math.floor(Math.random() * (92 - 58) + 58),
-          identifiedPains: ["Temps d'attente élevé aux urgences", "Saisie manuelle des dossiers patients", "Ruptures de stock en pharmacie"],
-          recommendedPacks: ["CONNECT", "PROCESS"],
-          potentialROI: "+40% d'efficience opérationnelle",
+          identifiedPains: ["Processus manuels chronophages", "Manque de visibilité sur les réseaux", "Données non exploitées pour la stratégie"],
+          recommendedPacks: ["Connect", "Process", "Insight"],
+          potentialROI: "+50% de croissance et d'efficacité",
           transformationPlan: [
-            "Mise en place de MED CONNECT pour la prise de RDV",
-            "Digitalisation du DPI avec SAWA PROCESS",
-            "Automatisation de l'inventaire pharmacie"
+            "Lancement de DOULIA Connect pour la visibilité réseaux",
+            "Automatisation des flux avec DOULIA Process",
+            "Déploiement d'outils analytiques DOULIA Insight"
           ]
         });
       }
@@ -247,7 +248,7 @@ const App: React.FC = () => {
   };
 
   const handleSolutionClick = (solutionName: string) => {
-    const prompt = `Comment le pack ${solutionName} peut-il améliorer spécifiquement la qualité des soins dans mon établissement ?`;
+    const prompt = `Comment la solution ${solutionName} peut-elle améliorer spécifiquement la performance de mon entreprise ?`;
     handleSend(prompt);
   };
 
@@ -265,8 +266,8 @@ const App: React.FC = () => {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
           </button>
           <div className="hidden md:flex gap-2">
-            <button onClick={() => setView('chat')} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${view === 'chat' ? 'bg-[#1B3B66] text-white shadow-xl' : 'text-[#1B3B66] hover:bg-slate-100'}`}>Console Audit</button>
-            <button onClick={() => auditData && setView('audit')} disabled={!auditData} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${view === 'audit' ? 'bg-[#C07D38] text-white shadow-xl' : auditData ? 'text-[#C07D38] hover:bg-slate-100' : 'text-slate-300 opacity-40 cursor-not-allowed'}`}>Résultat Audit</button>
+            <button onClick={() => setView('chat')} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${view === 'chat' ? 'bg-[#1B3B66] text-white shadow-xl' : 'text-[#1B3B66] hover:bg-slate-100'}`}>Espace Conseil</button>
+            <button onClick={() => auditData && setView('audit')} disabled={!auditData} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${view === 'audit' ? 'bg-[#C07D38] text-white shadow-xl' : auditData ? 'text-[#C07D38] hover:bg-slate-100' : 'text-slate-300 opacity-40 cursor-not-allowed'}`}>Stratégie Digitale</button>
           </div>
         </div>
       </header>
@@ -281,13 +282,13 @@ const App: React.FC = () => {
                   <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <div className="pb-4 border-b border-slate-100 mb-6">
-                  <h1 className="text-2xl font-black text-[#1B3B66] tracking-tighter uppercase leading-tight">Solutions <span className="text-[#C07D38]">MED SAWA</span></h1>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Audit de Performance Hospitalière</p>
+                  <h1 className="text-2xl font-black text-[#1B3B66] tracking-tighter uppercase leading-tight">Solutions <span className="text-[#C07D38]">DOULIA</span></h1>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Cabinet de Conseil IA & Stratégie</p>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
-                  <SolutionCard title="MED Connect" subtitle="RELATION PATIENTS" desc="Interface intelligente WhatsApp/Web pour optimiser la prise de rendez-vous." colorClass="bg-green-500" icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586z"/></svg>} onClick={() => handleSolutionClick("MED Connect")} />
-                  <SolutionCard title="SAWA Process" subtitle="OPÉRATIONS CLINIQUES" desc="Digitalisez vos flux internes, DPI et stocks pour une sécurité maximale." colorClass="bg-blue-500" icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>} onClick={() => handleSolutionClick("SAWA Process")} />
-                  <SolutionCard title="SAWA Insight" subtitle="PILOTAGE ANALYTIQUE" desc="Exploitez vos données hospitalières pour anticiper les besoins sanitaires." colorClass="bg-indigo-500" icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z"/></svg>} onClick={() => handleSolutionClick("SAWA Insight")} />
+                  <SolutionCard title="DOULIA Connect" subtitle="RÉSEAUX SOCIAUX" desc="Boostez votre visibilité et votre engagement client sur toutes les plateformes." colorClass="bg-green-500" icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586z"/></svg>} onClick={() => handleSolutionClick("DOULIA Connect")} />
+                  <SolutionCard title="DOULIA Process" subtitle="AUTOMATISATION" desc="Optimisez vos opérations internes pour gagner en efficacité et en rapidité." colorClass="bg-blue-500" icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>} onClick={() => handleSolutionClick("DOULIA Process")} />
+                  <SolutionCard title="DOULIA Insight" subtitle="STRATÉGIE DATA" desc="Exploitez vos données pour prendre des décisions éclairées et prédictives." colorClass="bg-indigo-500" icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z"/></svg>} onClick={() => handleSolutionClick("DOULIA Insight")} />
                 </div>
               </aside>
 
@@ -304,7 +305,7 @@ const App: React.FC = () => {
                     <div className="flex justify-start">
                       <div className="bg-white/80 border border-slate-100 px-6 py-3 rounded-full shadow-lg flex items-center gap-3">
                         <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} className="w-2 h-2 bg-[#C07D38] rounded-full" />
-                        <span className="text-[10px] font-black text-[#C07D38] uppercase tracking-[0.2em]">MED SAWA Analyse Clinique</span>
+                        <span className="text-[10px] font-black text-[#C07D38] uppercase tracking-[0.2em]">Douly en réflexion stratégique</span>
                       </div>
                     </div>
                   )}
@@ -346,7 +347,7 @@ const App: React.FC = () => {
                       </svg>
                     </button>
                     <div className="flex-1 flex items-center bg-slate-100 rounded-2xl md:rounded-[2.2rem] px-4 md:px-8 py-1">
-                      <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder={isListening ? "Diagnostic vocal..." : "Posez une question ou joignez un schéma hospitalier..."} className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-3 text-slate-800 placeholder-slate-400 outline-none" />
+                      <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder={isListening ? "Douly vous écoute..." : "Posez une question sur votre stratégie..."} className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-3 text-slate-800 placeholder-slate-400 outline-none" />
                       <button onClick={() => handleSend()} disabled={isTyping} className="p-2 text-[#1B3B66] disabled:opacity-20 hover:scale-110 transition-transform"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></button>
                     </div>
                   </div>
@@ -358,33 +359,33 @@ const App: React.FC = () => {
               <div className="max-w-6xl mx-auto space-y-6 print:space-y-8">
                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border border-slate-100 print:shadow-none print:border-none print:p-0 print:pb-8 print:border-b print:rounded-none">
                     <div className="flex items-center gap-4">
-                      <img src={LOGO_URL} alt="MED SAWA" className="w-12 h-12 md:w-16 md:h-16 object-contain hidden print:block" />
+                      <img src={LOGO_URL} alt="DOULIA" className="w-12 h-12 md:w-16 md:h-16 object-contain hidden print:block" />
                       <div>
-                        <h1 className="text-3xl md:text-4xl font-black text-[#1B3B66] uppercase tracking-tight">Audit Hospitalier <span className="text-[#C07D38]">MED SAWA</span></h1>
-                        <p className="text-[10px] md:text-xs font-bold text-[#C07D38] uppercase tracking-[0.3em] mt-1 print:text-[#1B3B66]">Rapport Stratégique d'Excellence Santé • {new Date().toLocaleDateString('fr-FR')}</p>
+                        <h1 className="text-3xl md:text-4xl font-black text-[#1B3B66] uppercase tracking-tight">Audit Stratégique <span className="text-[#C07D38]">DOULIA</span></h1>
+                        <p className="text-[10px] md:text-xs font-bold text-[#C07D38] uppercase tracking-[0.3em] mt-1 print:text-[#1B3B66]">Rapport d'Excellence Opérationnelle • {new Date().toLocaleDateString('fr-FR')}</p>
                       </div>
                     </div>
                     <div className="mt-6 md:mt-0 flex gap-3 print:hidden">
                       <button onClick={handleExport} className="flex items-center gap-2 px-6 py-3 bg-[#C07D38] text-white rounded-xl text-[10px] font-black uppercase shadow-lg hover:shadow-2xl transition-all active:scale-95">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Exporter Rapport
+                        Exporter Stratégie
                       </button>
-                      <button onClick={() => setView('chat')} className="px-6 py-3 bg-[#1B3B66] text-white rounded-xl text-[10px] font-black uppercase shadow-lg hover:shadow-2xl transition-all active:scale-95">Retour Console</button>
+                      <button onClick={() => setView('chat')} className="px-6 py-3 bg-[#1B3B66] text-white rounded-xl text-[10px] font-black uppercase shadow-lg hover:shadow-2xl transition-all active:scale-95">Retour Conseil</button>
                     </div>
                  </div>
 
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-[#1B3B66] p-8 md:p-10 rounded-[2.5rem] text-white text-center shadow-2xl relative overflow-hidden group print:rounded-2xl print:bg-[#1B3B66] print:text-white">
                       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <span className="text-[10px] md:text-xs font-black uppercase opacity-60 tracking-widest relative z-10">Maturité Digitale Santé</span>
+                      <span className="text-[10px] md:text-xs font-black uppercase opacity-60 tracking-widest relative z-10">Maturité Digitale</span>
                       <div className="text-6xl md:text-7xl font-black mt-2 tracking-tighter relative z-10">{auditData?.maturityScore}%</div>
-                      <div className="mt-4 text-[9px] font-bold uppercase opacity-40 relative z-10">Standard Excellence MED SAWA</div>
+                      <div className="mt-4 text-[9px] font-bold uppercase opacity-40 relative z-10">Standard Excellence DOULIA</div>
                     </div>
                     <div className="md:col-span-2 bg-white p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-center border border-slate-100 shadow-xl relative overflow-hidden print:rounded-2xl print:border print:shadow-none">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-[#C07D38]/5 rounded-full blur-3xl -mr-16 -mt-16" />
-                      <span className="text-[#C07D38] text-[10px] md:text-xs font-black uppercase mb-2 tracking-[0.2em]">Potentiel d'Efficience</span>
+                      <span className="text-[#C07D38] text-[10px] md:text-xs font-black uppercase mb-2 tracking-[0.2em]">Potentiel de Croissance</span>
                       <p className="text-2xl md:text-3xl font-black text-[#1B3B66] uppercase leading-tight">{auditData?.potentialROI}</p>
-                      <p className="text-slate-400 text-xs mt-2 font-medium">Projection basée sur la réduction des erreurs médicales et l'optimisation des flux patients.</p>
+                      <p className="text-slate-400 text-xs mt-2 font-medium">Projection basée sur l'optimisation des processus et l'augmentation de la visibilité.</p>
                     </div>
                  </div>
 
@@ -392,7 +393,7 @@ const App: React.FC = () => {
                    <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 print:shadow-none print:border print:rounded-2xl">
                      <h2 className="text-[#C07D38] text-[10px] md:text-xs font-black uppercase mb-6 tracking-widest flex items-center gap-2">
                        <span className="w-1.5 h-1.5 bg-[#C07D38] rounded-full" />
-                       Zones de Tension Clinique
+                       Zones de Tension Identifiées
                      </h2>
                      <div className="space-y-4">
                        {auditData?.identifiedPains.map((pain, i) => (
@@ -413,8 +414,8 @@ const App: React.FC = () => {
                        {auditData?.recommendedPacks.map((pack, i) => (
                          <div key={i} className="flex items-center justify-between p-4 bg-[#1B3B66]/5 rounded-2xl border border-[#1B3B66]/10">
                            <div className="flex items-center gap-3">
-                             <div className="w-10 h-10 bg-[#1B3B66] text-white rounded-xl flex items-center justify-center font-black">M</div>
-                             <span className="font-black text-[#1B3B66] uppercase tracking-tighter">MED {pack}</span>
+                             <div className="w-10 h-10 bg-[#1B3B66] text-white rounded-xl flex items-center justify-center font-black">D</div>
+                             <span className="font-black text-[#1B3B66] uppercase tracking-tighter">DOULIA {pack}</span>
                            </div>
                            <span className="text-[10px] font-black text-[#C07D38] uppercase">Impact Majeur</span>
                          </div>
@@ -424,7 +425,7 @@ const App: React.FC = () => {
                  </div>
 
                  <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100 print:shadow-none print:border print:rounded-2xl">
-                   <h2 className="text-[#C07D38] text-[10px] md:text-xs font-black uppercase mb-8 tracking-[0.3em] text-center">Plan d'Implémentation Hospitalière</h2>
+                   <h2 className="text-[#C07D38] text-[10px] md:text-xs font-black uppercase mb-8 tracking-[0.3em] text-center">Plan d'Implémentation Stratégique</h2>
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
                      <div className="absolute top-1/2 left-0 right-0 h-px bg-slate-100 hidden md:block -translate-y-1/2 z-0" />
                      {auditData?.transformationPlan.map((step, i) => (
@@ -443,14 +444,14 @@ const App: React.FC = () => {
 
                  <div className="bg-[#1B3B66] p-8 md:p-12 rounded-[2.5rem] text-center text-white relative overflow-hidden print:bg-[#1B3B66] print:text-white print:rounded-2xl">
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-                    <h2 className="text-2xl md:text-3xl font-black uppercase mb-4 relative z-10 tracking-tight">Visez l'Excellence Médicale</h2>
-                    <p className="text-white/60 text-sm md:text-base mb-8 max-w-2xl mx-auto relative z-10">Contactez nos consultants MED SAWA pour une étude de faisabilité technique et budgétaire.</p>
+                    <h2 className="text-2xl md:text-3xl font-black uppercase mb-4 relative z-10 tracking-tight">Visez l'Excellence Business</h2>
+                    <p className="text-white/60 text-sm md:text-base mb-8 max-w-2xl mx-auto relative z-10">Contactez nos consultants DOULIA pour une étude de faisabilité et un accompagnement sur mesure.</p>
                     <div className="flex flex-col md:flex-row items-center justify-center gap-6 relative z-10">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
                           <svg className="w-5 h-5 text-[#C07D38]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         </div>
-                        <span className="font-bold text-sm">contact@medsawa.cm</span>
+                        <span className="font-bold text-sm">contact@douliacameroun.com</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
@@ -462,7 +463,7 @@ const App: React.FC = () => {
                  </div>
 
                  <div className="hidden print:block text-center pt-8 border-t border-slate-100">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Généré par MED SAWA IA • Expert en Transformation Hospitalière au Cameroun</p>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Généré par DOULIA IA • Expert en Transformation Digitale au Cameroun</p>
                  </div>
               </div>
             </motion.div>
@@ -471,8 +472,8 @@ const App: React.FC = () => {
       </main>
 
       <footer className="h-10 hidden md:flex shrink-0 bg-white border-t border-slate-100 items-center justify-between px-8 z-50 print:hidden">
-        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">© 2025 MED SAWA • L'EXCELLENCE HOSPITALIÈRE PAR L'IA</p>
-        <p className="text-[8px] font-bold text-[#C07D38] uppercase tracking-widest">contact@medsawa.cm</p>
+        <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">© 2025 DOULIA • L'EXCELLENCE DIGITALE PAR L'IA</p>
+        <p className="text-[8px] font-bold text-[#C07D38] uppercase tracking-widest">contact@douliacameroun.com</p>
       </footer>
     </div>
   );
