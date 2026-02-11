@@ -1,155 +1,101 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ⚠️ COLLE TA CLÉ API ICI
+// ⚠️ METTEZ VOTRE CLÉ ICI
 const API_KEY = "AIzaSyAsrP_cMNKJqDvBv9_4LFReEP8fEPi6ew0"; 
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isFirstVisit, setIsFirstVisit] = useState(true);
   const messagesEndRef = useRef(null);
 
-  // Initialisation de l'IA avec le modèle le plus fiable
-  const genAI = new GoogleGenerativeAI(API_KEY);
-
-  // Scroll automatique vers le bas
-  const scrollToBottom = () => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
   }, [messages]);
-
-  // GESTION DE LA MÉMOIRE CLIENT
-  useEffect(() => {
-    const hasVisited = localStorage.getItem('med_sawa_client_memory');
-    if (hasVisited) {
-      setIsFirstVisit(false);
-    } else {
-      localStorage.setItem('med_sawa_client_memory', 'true');
-    }
-  }, []);
-
-  const systemInstruction = `
-    INSTRUCTIONS SYSTÈME POUR MED SAWA :
-    
-    1. IDENTITÉ : Tu es MED SAWA, l'IA Hospitalière Élite du Cameroun, créée par DOULIA.
-    2. MISSION : Assister les directeurs d'hôpitaux via les solutions DOULIA (Connect, Process, Insight).
-    3. COMPORTEMENT :
-       - Si le client revient, salue-le comme un partenaire fidèle ("Ravi de vous revoir...").
-       - NÉGOCIATION : Tu es un expert. Si le client hésite, rassure-le avec des arguments sur le ROI et l'efficacité.
-       - VENTE CROISÉE : Propose subtilement des "Audits IA Hospitaliers" ou des "Formations Personnel Médical".
-    4. SÉCURITÉ & CONTACT :
-       - Si une question dépasse tes compétences médicales/techniques, dis : "Pour cette expertise spécifique, veuillez contacter nos spécialistes à Douala au (+237) 6 56 30 48 18 ou 6 73 04 31 27."
-       - À chaque fin de conversation importante, précise : "Vos besoins ont été transmis à contact@douliacameroun.com."
-    5. INTERDICTION : Ne jamais envoyer de PDF ou de rapport fictif à l'utilisateur.
-  `;
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    
-    const userMsg = { role: "user", text: input };
-    setMessages(prev => [...prev, userMsg]);
+    const newMsg = { role: "user", text: input };
+    setMessages(prev => [...prev, newMsg]);
     setInput("");
     setLoading(true);
 
     try {
-      // Utilisation du modèle Flash, plus rapide et fiable
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
-      // Construction du contexte pour la mémoire immédiate
-      let history = systemInstruction + "\n\nHistorique de conversation :\n";
-      messages.forEach(msg => {
-        history += `${msg.role === 'user' ? 'Client' : 'MED SAWA'}: ${msg.text}\n`;
-      });
-      history += `Client: ${input}\nMED SAWA:`;
-
-      const result = await model.generateContent(history);
-      const response = await result.response;
-      const text = response.text();
-      
-      setMessages(prev => [...prev, { role: "ai", text: text }]);
+      const result = await model.generateContent(`Tu es MED SAWA, l'IA hospitalière d'élite de DOULIA. Réponds de manière experte. Instruction : ${input}`);
+      const text = result.response.text();
+      setMessages(prev => [...prev, { role: "ai", text }]);
     } catch (error) {
-      console.error("Erreur IA:", error);
-      setMessages(prev => [...prev, { role: "ai", text: "Je rencontre une difficulté de connexion. Pour une assistance immédiate, appelez le 6 56 30 48 18." }]);
-    } finally {
-      setLoading(false);
-    }
+      setMessages(prev => [...prev, { role: "ai", text: "Difficulté de connexion. Contactez le 6 56 30 48 18." }]);
+    } finally { setLoading(false); }
   };
 
   return (
-    // CONTENEUR PRINCIPAL AVEC DÉGRADÉ "ÉLITE"
-    <div className="min-h-screen font-sans text-slate-800 flex flex-col items-center justify-center p-4 relative overflow-hidden"
-         style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #EBF4FF 50%, #F0F9FF 100%)' }}>
-      
-      {/* En-tête */}
-      <header className="text-center mb-6 z-10">
-        <h1 className="text-4xl font-extrabold mb-2" style={{ color: '#1B3B66' }}>MED SAWA</h1>
-        <p className="font-medium tracking-wide" style={{ color: '#C07D38' }}>IA Hospitalière Élite</p>
-      </header>
-
-      {/* Carte principale effet "Glassmorphism" */}
-      <div className="w-full max-w-3xl h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-white/50 backdrop-blur-xl z-10"
-           style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}>
+    <div className="flex h-screen bg-slate-50 font-sans">
+      {/* PANNEAU LATÉRAL (Comme sur votre photo 1) */}
+      <div className="w-80 bg-[#1B3B66]/5 border-r border-slate-200 p-6 hidden md:flex flex-col">
+        <div className="mb-10">
+          <h2 className="text-[#1B3B66] font-extrabold text-xl">SOLUTIONS <span className="text-[#C07D38]">DOULIA</span></h2>
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest">Cabinet de Conseil IA & Stratégie</p>
+        </div>
         
-        {/* Zone de chat */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        <div className="space-y-6">
+          <div className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+            <h3 className="font-bold text-[#1B3B66] text-sm">DOULIA CONNECT</h3>
+            <p className="text-xs text-slate-500 mt-1">Boostez votre visibilité et votre engagement client.</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-cyan-500">
+            <h3 className="font-bold text-[#1B3B66] text-sm">DOULIA PROCESS</h3>
+            <p className="text-xs text-slate-500 mt-1">Optimisez vos opérations internes pour gagner en efficacité.</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-amber-500">
+            <h3 className="font-bold text-[#1B3B66] text-sm">DOULIA INSIGHT</h3>
+            <p className="text-xs text-slate-500 mt-1">Analyse de données et support à la décision stratégique.</p>
+          </div>
+        </div>
+        <div className="mt-auto text-[10px] text-slate-400 uppercase">© 2026 DOULIA • L'Excellence Digitale</div>
+      </div>
+
+      {/* ZONE DE CHAT PRINCIPALE */}
+      <div className="flex-1 flex flex-col relative">
+        <header className="h-16 border-b bg-white flex items-center justify-between px-8">
+          <div className="flex items-center gap-3">
+             <div className="w-8 h-8 bg-[#1B3B66] rounded flex items-center justify-center text-white font-bold text-xs">MS</div>
+             <span className="font-bold text-[#1B3B66]">Assistant Santé MED SAWA</span>
+          </div>
+          <button className="text-[10px] bg-[#1B3B66] text-white px-3 py-1 rounded-full font-bold uppercase tracking-wider">Espace Conseil</button>
+        </header>
+
+        <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#F8FAFC]">
           {messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-70">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-3xl">🏥</div>
-              <p className="text-lg font-medium text-slate-600 max-w-md">
-                {isFirstVisit 
-                  ? "Bienvenue. Je suis MED SAWA, prête à optimiser votre structure hospitalière. Par quoi commençons-nous ?" 
-                  : "Ravi de vous revoir. Continuons notre optimisation. Quel est le défi du jour ?"}
+            <div className="max-w-2xl mx-auto bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mt-10">
+              <p className="text-slate-600 leading-relaxed text-lg">
+                Bienvenue chez <strong>DOULIA</strong>, votre partenaire d'élite pour la transformation digitale par l'IA au Cameroun. 🚀<br/><br/>
+                Je suis <strong>MED SAWA</strong>, votre consultante experte. Ensemble, nous allons propulser votre structure.
               </p>
             </div>
           )}
-          
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] p-4 rounded-2xl shadow-sm text-sm leading-relaxed ${
-                m.role === 'user' 
-                  ? 'bg-[#1B3B66] text-white rounded-tr-none' 
-                  : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'
-              }`}>
+              <div className={`max-w-[80%] p-4 rounded-2xl shadow-sm ${m.role === 'user' ? 'bg-[#1B3B66] text-white rounded-tr-none' : 'bg-white border border-slate-200 rounded-tl-none'}`}>
                 {m.text}
               </div>
             </div>
           ))}
-          {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 text-sm text-slate-400 italic">
-                MED SAWA analyse...
-              </div>
-            </div>
-          )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Zone de saisie */}
-        <div className="p-4 bg-white/80 border-t border-white flex gap-3 backdrop-blur-md">
-          <input 
-            className="flex-1 p-4 rounded-xl border border-slate-200 bg-white/90 focus:outline-none focus:ring-2 focus:ring-[#C07D38]/50 focus:border-[#C07D38] transition-all shadow-inner placeholder-slate-400"
-            value={input} 
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSend()} 
-            placeholder="Posez votre question stratégique ou médicale..." 
-          />
-          <button 
-            onClick={handleSend}
-            disabled={loading}
-            className="bg-[#C07D38] hover:bg-[#a66a2e] text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-            {loading ? '...' : 'Envoyer'}
-          </button>
+        <div className="p-6 bg-white border-t">
+          <div className="max-w-4xl mx-auto flex gap-4 bg-slate-100 p-2 rounded-2xl border border-slate-200">
+            <input className="flex-1 bg-transparent px-4 py-2 outline-none text-sm" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Posez une question sur votre stratégie..." />
+            <button onClick={handleSend} className="bg-[#1B3B66] text-white p-3 rounded-xl shadow-lg hover:opacity-90 transition">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </button>
+          </div>
+          <p className="text-center text-[9px] text-slate-400 mt-3 uppercase tracking-widest">Contact@douliacameroun.com</p>
         </div>
-      </div>
-      
-      {/* Signature */}
-      <div className="mt-6 text-xs text-slate-400 text-center font-medium">
-        Propulsé par DOULIA • (+237) 6 56 30 48 18
       </div>
     </div>
   );
