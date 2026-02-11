@@ -1,103 +1,155 @@
-import React, { useState, useEffect } from 'react';
-// On utilise maintenant la librairie stable qui ne plante pas sur Vercel
+import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ⚠️ COLLE TA CLÉ API ICI (Celle qui commence par AIza...)
+// ⚠️ COLLE TA CLÉ API ICI
 const API_KEY = "AIzaSyAsrP_cMNKJqDvBv9_4LFReEP8fEPi6ew0"; 
 
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
+  const messagesEndRef = useRef(null);
 
-  // Initialisation standard et stable
+  // Initialisation de l'IA avec le modèle le plus fiable
   const genAI = new GoogleGenerativeAI(API_KEY);
 
+  // Scroll automatique vers le bas
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
-    // Mémoire du client
-    const hasVisited = localStorage.getItem('med_sawa_visited');
+    scrollToBottom();
+  }, [messages]);
+
+  // GESTION DE LA MÉMOIRE CLIENT
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('med_sawa_client_memory');
     if (hasVisited) {
       setIsFirstVisit(false);
     } else {
-      localStorage.setItem('med_sawa_visited', 'true');
+      localStorage.setItem('med_sawa_client_memory', 'true');
     }
   }, []);
 
   const systemInstruction = `
-    Rôle : Tu es MED SAWA, l'IA hospitalière d'élite de DOULIA.
-    Mission : Assister les hôpitaux (DOULIA Connect, Process, Insight).
-    Comportement : 
-    1. Si le client revient, accueille-le comme un partenaire connu.
-    2. Négociation : Sois un expert. Traite les objections calmement.
-    3. Vente : Propose subtilement des audits IA et formations pour le personnel.
-    4. Sécurité : Si tu ne sais pas, donne ces numéros : (+237) 6 56 30 48 18 ou 6 73 04 31 27.
-    5. Contact : Dis toujours que les données sont transmises à contact@douliacameroun.com.
+    INSTRUCTIONS SYSTÈME POUR MED SAWA :
+    
+    1. IDENTITÉ : Tu es MED SAWA, l'IA Hospitalière Élite du Cameroun, créée par DOULIA.
+    2. MISSION : Assister les directeurs d'hôpitaux via les solutions DOULIA (Connect, Process, Insight).
+    3. COMPORTEMENT :
+       - Si le client revient, salue-le comme un partenaire fidèle ("Ravi de vous revoir...").
+       - NÉGOCIATION : Tu es un expert. Si le client hésite, rassure-le avec des arguments sur le ROI et l'efficacité.
+       - VENTE CROISÉE : Propose subtilement des "Audits IA Hospitaliers" ou des "Formations Personnel Médical".
+    4. SÉCURITÉ & CONTACT :
+       - Si une question dépasse tes compétences médicales/techniques, dis : "Pour cette expertise spécifique, veuillez contacter nos spécialistes à Douala au (+237) 6 56 30 48 18 ou 6 73 04 31 27."
+       - À chaque fin de conversation importante, précise : "Vos besoins ont été transmis à contact@douliacameroun.com."
+    5. INTERDICTION : Ne jamais envoyer de PDF ou de rapport fictif à l'utilisateur.
   `;
 
   const handleSend = async () => {
     if (!input.trim()) return;
     
-    // Ajout du message utilisateur
-    const newMessages = [...messages, { role: "user", text: input }];
-    setMessages(newMessages);
+    const userMsg = { role: "user", text: input };
+    setMessages(prev => [...prev, userMsg]);
     setInput("");
+    setLoading(true);
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      // Utilisation du modèle Flash, plus rapide et fiable
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
-      // Construction de l'historique pour l'IA
-      let promptContext = systemInstruction + "\n\n";
-      newMessages.forEach(msg => {
-        promptContext += `${msg.role === 'user' ? 'Client' : 'Med Sawa'}: ${msg.text}\n`;
+      // Construction du contexte pour la mémoire immédiate
+      let history = systemInstruction + "\n\nHistorique de conversation :\n";
+      messages.forEach(msg => {
+        history += `${msg.role === 'user' ? 'Client' : 'MED SAWA'}: ${msg.text}\n`;
       });
+      history += `Client: ${input}\nMED SAWA:`;
 
-      const result = await model.generateContent(promptContext);
+      const result = await model.generateContent(history);
       const response = await result.response;
       const text = response.text();
       
-      setMessages([...newMessages, { role: "ai", text: text }]);
+      setMessages(prev => [...prev, { role: "ai", text: text }]);
     } catch (error) {
-      console.error(error);
-      setMessages(prev => [...prev, { role: "ai", text: "Je rencontre une difficulté technique. Merci de contacter le support au 6 56 30 48 18." }]);
+      console.error("Erreur IA:", error);
+      setMessages(prev => [...prev, { role: "ai", text: "Je rencontre une difficulté de connexion. Pour une assistance immédiate, appelez le 6 56 30 48 18." }]);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 font-sans text-slate-800">
-      <header className="py-6 text-center">
-        <h1 className="text-3xl font-bold text-[#1B3B66]">MED SAWA</h1>
-        <p className="text-[#C07D38] font-medium">Assistant Hospitalier Élite</p>
+    // CONTENEUR PRINCIPAL AVEC DÉGRADÉ "ÉLITE"
+    <div className="min-h-screen font-sans text-slate-800 flex flex-col items-center justify-center p-4 relative overflow-hidden"
+         style={{ background: 'linear-gradient(135deg, #FFFFFF 0%, #EBF4FF 50%, #F0F9FF 100%)' }}>
+      
+      {/* En-tête */}
+      <header className="text-center mb-6 z-10">
+        <h1 className="text-4xl font-extrabold mb-2" style={{ color: '#1B3B66' }}>MED SAWA</h1>
+        <p className="font-medium tracking-wide" style={{ color: '#C07D38' }}>IA Hospitalière Élite</p>
       </header>
 
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-xl h-[500px] flex flex-col border border-slate-200">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Carte principale effet "Glassmorphism" */}
+      <div className="w-full max-w-3xl h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-white/50 backdrop-blur-xl z-10"
+           style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}>
+        
+        {/* Zone de chat */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
           {messages.length === 0 && (
-            <div className="text-center mt-20">
-              <p className="text-lg font-medium text-slate-600">
-                {isFirstVisit ? "Bienvenue sur l'interface MED SAWA." : "Ravi de vous revoir parmi nous."}
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-70">
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-3xl">🏥</div>
+              <p className="text-lg font-medium text-slate-600 max-w-md">
+                {isFirstVisit 
+                  ? "Bienvenue. Je suis MED SAWA, prête à optimiser votre structure hospitalière. Par quoi commençons-nous ?" 
+                  : "Ravi de vous revoir. Continuons notre optimisation. Quel est le défi du jour ?"}
               </p>
-              <p className="text-sm text-slate-400 mt-2">Comment puis-je optimiser votre service aujourd'hui ?</p>
             </div>
           )}
+          
           {messages.map((m, i) => (
-            <div key={i} className={`p-3 rounded-lg max-w-[85%] text-sm ${m.role === 'user' ? 'bg-[#1B3B66] text-white self-end ml-auto' : 'bg-slate-100 text-slate-800'}`}>
-              {m.text}
+            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] p-4 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                m.role === 'user' 
+                  ? 'bg-[#1B3B66] text-white rounded-tr-none' 
+                  : 'bg-white text-slate-700 border border-slate-100 rounded-tl-none'
+              }`}>
+                {m.text}
+              </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 text-sm text-slate-400 italic">
+                MED SAWA analyse...
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
-        <div className="p-4 border-t bg-slate-50 rounded-b-xl flex gap-2">
+        {/* Zone de saisie */}
+        <div className="p-4 bg-white/80 border-t border-white flex gap-3 backdrop-blur-md">
           <input 
-            className="flex-1 p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#C07D38]"
+            className="flex-1 p-4 rounded-xl border border-slate-200 bg-white/90 focus:outline-none focus:ring-2 focus:ring-[#C07D38]/50 focus:border-[#C07D38] transition-all shadow-inner placeholder-slate-400"
             value={input} 
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSend()} 
-            placeholder="Décrivez votre besoin..." 
+            placeholder="Posez votre question stratégique ou médicale..." 
           />
-          <button onClick={handleSend} className="bg-[#C07D38] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#a66a2e] transition">
-            Envoyer
+          <button 
+            onClick={handleSend}
+            disabled={loading}
+            className="bg-[#C07D38] hover:bg-[#a66a2e] text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
+            {loading ? '...' : 'Envoyer'}
           </button>
         </div>
+      </div>
+      
+      {/* Signature */}
+      <div className="mt-6 text-xs text-slate-400 text-center font-medium">
+        Propulsé par DOULIA • (+237) 6 56 30 48 18
       </div>
     </div>
   );
