@@ -1,6 +1,6 @@
 {
-  "name": "Assistant Santé MED SAWA - IA Hospitalière Élite",
-  "description": "Plateforme d'audit et de transformation hospitalière par l'IA au Cameroun. Solutions B2B par MED SAWA & DOULIA.",
+  "name": "MED SAWA - IA Consulting Élite",
+  "description": "Plateforme d'audit et de transformation digitale par l'IA au Cameroun.",
   "requestFramePermissions": [
     "microphone"
   ]

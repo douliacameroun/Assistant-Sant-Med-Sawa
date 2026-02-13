@@ -1,6 +1,6 @@
 
 {
-  "name": "med-sawa-ai",
+  "name": "doulia-ai-consulting",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -13,7 +13,7 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "framer-motion": "^11.11.11",
-    "@google/generative-ai": "^0.2.1"
+    "@google/genai": "^1.37.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
